@@ -18,7 +18,7 @@ namespace Mailer
             app.Command("send", cmd =>
             {
                 cmd.Description = "Tests a connection to an endpoint";
-
+               
                 var serverOption = cmd.Option("-h | --server", "The SMTP Server", CommandOptionType.SingleValue);
                 var enableSslOption = cmd.Option("-s | --ssl", "Secure with ssl", CommandOptionType.NoValue);
                 var fromOption = cmd.Option("-f | --from", "Email from", CommandOptionType.SingleValue);
@@ -68,7 +68,7 @@ namespace Mailer
 
                     if (!string.IsNullOrWhiteSpace(server) && !string.IsNullOrWhiteSpace(from))
                     {
-                        using (var smtpServer = new SmtpClient(server))
+                        using (var smtpServer = new SmtpClient(server, port))
                         {
                             var message = new MailMessage
                             {
@@ -92,7 +92,6 @@ namespace Mailer
 
                             if (message.To.Any())
                             {
-                                smtpServer.Port = port;
                                 smtpServer.EnableSsl = useSsl;
                                 if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
                                 {
