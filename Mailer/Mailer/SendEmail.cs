@@ -85,7 +85,8 @@ namespace Mailer
                                 }
                                 catch (FormatException)
                                 {
-                                    logger.LogError("SmtpController: Invalid To Address: {0}", item);
+                                    logger.LogError("Invalid To Address: {0}", item);
+                                    return 1;
                                 }
                             }
 
@@ -99,21 +100,28 @@ namespace Mailer
                                     smtpServer.Credentials = new System.Net.NetworkCredential(username, password);                                   
                                 }
 
-
                                 if (!string.IsNullOrWhiteSpace(authType))
                                 {
                                     smtpServer.Credentials = smtpServer.Credentials.GetCredential(server, smtpServer.Port, authType);
                                 }
                                 
                                 await smtpServer.SendMailAsync(message);
+
+                                logger.LogInformation($"Mail sent successfully: {message}");
                             }
                             else
                             {
                                 logger.LogError("Did not send an email because To list is empty");
+                                return 1;
                             }
                         }
                     }
 
+                }
+                else
+                {
+                    logger.LogError("Missing email settings. Please check To, Subject and Body!");
+                    return 1;
                 }
 
             }
