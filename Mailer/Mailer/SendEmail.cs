@@ -49,6 +49,8 @@ namespace Mailer
 
             // Add dependencies
             services.AddLogging(configure => configure.AddConsole().SetMinimumLevel(LogLevel.Debug));
+            services.AddSingleton<ILoggerFactory, LoggerFactory>();
+            services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
             services.AddOptions();
 
 
@@ -60,7 +62,7 @@ namespace Mailer
         public static async Task<int> ExecuteAsync(string server, int port, string from, List<string> to, string subject, string body, string username, string password, bool useSsl, string authType)
         {
             var provider = ConfigureAndBuild();
-            var logger = provider.GetRequiredService<ILogger>();
+            var logger = provider.GetRequiredService<ILogger<SendEmail>>();
             try
             {
                 if (to != null && to.Any() && !string.IsNullOrWhiteSpace(subject) && !string.IsNullOrWhiteSpace(body))
